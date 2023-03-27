@@ -36,5 +36,18 @@ class UserProfilesView(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMix
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except JSONDecodeError:
             return JsonResponse(status=status.HTTP_400_BAD_REQUEST)
-        
 """
+
+from django.http import HttpResponse, JsonResponse
+from .models import UserProfiles
+from django.forms.models import model_to_dict
+from .serializers import *
+import json
+
+
+def index(request,index):
+    request = UserProfiles.objects.get(id=index)
+    serializer = UserProfilesSerializer(request)
+    return JsonResponse(serializer.data, safe = False)
+
+# Create your views here.
