@@ -39,9 +39,10 @@ class UserProfilesView(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMix
 """
 
 from django.http import HttpResponse, JsonResponse
-from .models import UserProfiles
-from django.forms.models import model_to_dict
+from rest_framework.parsers import JSONParser
+from .models import *
 from .serializers import *
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 
@@ -50,4 +51,36 @@ def index(request,index):
     serializer = UserProfilesSerializer(request)
     return JsonResponse(serializer.data, safe = False)
 
+def rides(request,ride):
+    data = Rides.objects.filter(creator=ride)
+    serializer = RidesSerializer(data, many=True)
+    return JsonResponse(serializer.data, safe = False)
+
+@csrf_exempt
+def Userprofile(request):
+    if request.method =='POST':
+        data = JSONParser().parse(request)
+        serializer = UserProfilesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors)
+    else:
+        return HttpResponse("failed")
+    
+@csrf_exempt
+def login(request):
+    if request.method =='POST':
+        data = JSONParser().parse(request)
+        print(data)
+        serializer = UserProfilesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors)
+    else:
+        return HttpResponse("failed")
+    
+
+    
 # Create your views here.
