@@ -6,6 +6,7 @@ from django.db import models
 
 class UserProfiles(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=254, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True, null=True)
     avg_rating = models.IntegerField(default=0)
@@ -21,6 +22,11 @@ class Rides(models.Model):
     creator = models.ForeignKey(User, related_name='rides', on_delete=models.CASCADE)
     origin = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
+    CHOICES = (
+        ('Taxi', 'Taxi'),
+        ('Personal Car', 'Personal Car'),
+    )
+    type = models.CharField(max_length=15, choices=CHOICES, default='Personal Car')
     date_time = models.DateTimeField()
     recurring = models.BooleanField()
     seats = models.IntegerField()

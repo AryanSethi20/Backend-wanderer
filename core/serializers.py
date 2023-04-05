@@ -6,9 +6,16 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 
 class RidesSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Rides
-        fields = ('creator', 'origin', 'destination', 'date_time', 'recurring', 'seats')
+        fields = ['id', 'creator', 'origin', 'destination', 'date_time', 'recurring', 'seats']
+
+class CreateRidesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rides
+        fields = ['origin', 'destination', 'date_time', 'recurring', 'seats']
+    
 
 class RideRequestsSerializer(serializers.ModelSerializer):
 
@@ -16,12 +23,12 @@ class RideRequestsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RideRequests
-        fields = ('ride', 'passenger', 'accepted')
+        fields = '__all__'
 
 class RatingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ratings
-        fields = ('user_rating', 'user_rated', 'rating', 'comment')
+        fields = '__all__'
 
 class UserProfilesSerializer(serializers.ModelSerializer):
     
@@ -29,4 +36,4 @@ class UserProfilesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfiles
-        fields = ('user', 'bio', 'profile_pic', 'avg_rating')
+        fields = '__all__'
