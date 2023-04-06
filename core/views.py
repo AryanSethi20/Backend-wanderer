@@ -38,9 +38,16 @@ class UserProfilesView(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMix
             return JsonResponse(status=status.HTTP_400_BAD_REQUEST)
 """
 
-from .models import UserProfiles
-from django.forms.models import model_to_dict
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from rest_framework.parsers import JSONParser
+from .models import *
 from .serializers import *
+from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework.parsers import JSONParser
 from rest_framework import generics
@@ -97,3 +104,50 @@ class ride(generics.ListAPIView):
     queryset = Rides.objects.all()
     serializer_class = RidesSerializer
 
+def rides(request,ride):
+    data = Rides.objects.filter(creator=ride)
+    serializer = RidesSerializer(data, many=True)
+    return JsonResponse(serializer.data, safe = False)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def getUserinfo(request):
+    user = request.user
+    user_data = {
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+    }
+    print(request.user)
+    return Response(user_data)
+
+@csrf_exempt
+def Userprofile(request):
+    if request.method =='POST':
+        data = JSONParser().parse(request)
+        serializer = UserProfilesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors)
+    else:
+        return HttpResponse("failed")
+    
+@csrf_exempt
+def login(request):
+    if request.method =='POST':
+        data = JSONParser().parse(request)
+        print(data)
+        serializer = UserProfilesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors)
+    else:
+        return HttpResponse("failed")
+    
+
+    
+# Create your views here.

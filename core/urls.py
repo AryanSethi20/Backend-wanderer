@@ -3,6 +3,7 @@ from . import views
 from .views import ride
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('rides/', ride.as_view()),
+    path('rides/<int:ride>/', views.rides, name='rides'),
+    path('user-info/', views.getUserinfo, name='User-info'),
+    path('<int:index>/', views.index, name='index'),
 ]
