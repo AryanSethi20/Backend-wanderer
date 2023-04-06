@@ -45,9 +45,36 @@ from .serializers import *
 import json
 
 
+<<<<<<< Updated upstream
 def index(request,index):
     request = UserProfiles.objects.get(id=index)
     serializer = UserProfilesSerializer(request)
     return JsonResponse(serializer.data, safe = False)
+=======
+@api_view(['GET', 'PUT', 'DELETE'])        
+def my_rides(request, creator):
+    #/core/rides
+    rides = Rides.objects.get(creator=creator)
+    if request.method == 'GET':
+        rides_serializer = RidesSerializer(rides, many=True)
+        
+        return Response(rides_serializer.data)
+
+    if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = RidesSerializer(rides, data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        rides.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ride(generics.ListAPIView):
+    queryset = Rides.objects.all()
+    serializer_class = RidesSerializer
+>>>>>>> Stashed changes
 
 # Create your views here.
