@@ -109,6 +109,11 @@ def rides(request,ride):
     serializer = RidesSerializer(data, many=True)
     return JsonResponse(serializer.data, safe = False)
 
+def rides(request,ride):
+    data = Rides.objects.filter(creator=ride)
+    serializer = RidesSerializer(data, many=True)
+    return JsonResponse(serializer.data, safe = False)
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
