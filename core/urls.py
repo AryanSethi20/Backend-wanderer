@@ -1,6 +1,6 @@
 from django.urls import path
-
 from . import views
+from .views import ride
 
 urlpatterns = [
     path('rides/<int:ride>/', views.rides, name='rides'),
