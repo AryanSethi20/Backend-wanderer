@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'core',
     "corsheaders",
     'conversation',
-    "corsheaders",
     'carparkAPI',
 ]
 
