@@ -12,5 +12,5 @@ urlpatterns += [
     path('admin/', admin.site.urls),
     path('core/',include('core.urls')),
     path('api-token-auth/', obtain_auth_token), #This gives us access to token authentication
-    path('carpark/', include('carparkAPI.urls')),
+    path('api/', include('api.urls')),
 ]

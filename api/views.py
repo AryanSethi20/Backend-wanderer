@@ -22,7 +22,7 @@ def get_token():
     return response_data
 
 
-#/carpark/
+#/api/carpark/
 @api_view(['GET'])
 def carpark(request):
     tokenResponse = get_token()
@@ -42,5 +42,13 @@ def carpark(request):
         "Token": token
     }
     response = requests.get(url, headers=headers)
+    response_data = response.json()
+    return Response(response_data)
+
+#/api/taxi/
+@api_view(['GET'])
+def taxiAvailability(request):
+    url = "https://api.data.gov.sg/v1/transport/taxi-availability"
+    response = requests.get(url)
     response_data = response.json()
     return Response(response_data)
