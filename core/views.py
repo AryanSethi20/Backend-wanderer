@@ -39,9 +39,10 @@ class UserProfilesView(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMix
 """
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
@@ -115,8 +116,8 @@ def rides(request,ride):
     return JsonResponse(serializer.data, safe = False)
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication,])
+@permission_classes([IsAuthenticated,])
 def getUserinfo(request):
     user = request.user
     user_data = {
@@ -152,7 +153,17 @@ def login(request):
         return JsonResponse(serializer.errors)
     else:
         return HttpResponse("failed")
-    
 
-    
-# Create your views here.
+@api_view(['POST'])
+@permission_classes([AllowAny,])
+def signup(request):
+        if request.method == 'POST':
+            data=JSONParser().parse(request)    
+            serializer = UserSerializer(data=data)
+
+            if serializer.is_valid():
+                serializer.save()
+                
+                return Response({'Success': 'User created successfully'}, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
