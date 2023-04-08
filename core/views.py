@@ -54,6 +54,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.db.models import Q
 
 @api_view(['GET'])
 def index(request):
@@ -114,6 +115,15 @@ def rides(request,ride):
     data = Rides.objects.filter(creator=ride)
     serializer = RidesSerializer(data, many=True)
     return JsonResponse(serializer.data, safe = False)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication,])
+@permission_classes([IsAuthenticated,])
+def myrides(request):
+    user = request.user
+    data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user))
+    serializer = RideRequestsSerializer(data, many=True)
+    return JsonResponse(serializer.data, safe= False)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication,])
