@@ -30,14 +30,6 @@ class RatingsSerializer(serializers.ModelSerializer):
         model = Ratings
         fields = '__all__'
 
-class UserProfilesSerializer(serializers.ModelSerializer):
-    
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    class Meta:
-        model = UserProfiles
-        fields = '__all__'
-        
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=5, write_only=True)
     
@@ -47,3 +39,24 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
+class UserProfilesSerializer(serializers.ModelSerializer):
+    
+    user = UserSerializer()
+    class Meta:
+        model = UserProfiles
+        fields = '__all__'
+        
+class RidesSerializer(serializers.ModelSerializer):
+    creator = UserSerializer()
+    class Meta:
+        model = Rides
+        fields = ['id', 'creator', 'origin', 'destination', 'date_time', 'recurring', 'seats']
+
+class RideRequestsSerializer(serializers.ModelSerializer):
+    ride = RidesSerializer()
+
+    class Meta:
+        model = RideRequests
+        fields = '__all__'
+        
