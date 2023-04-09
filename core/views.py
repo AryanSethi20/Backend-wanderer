@@ -61,23 +61,25 @@ def index(request):
     serializer = UserProfilesSerializer(request, many=True) # many=True is required for list of objects, many=False for single object
     return Response(serializer.data)
 
+#Method to create a ride and view all the rides
+#Path: /core/rides
 @api_view(['GET', 'POST'])
-def rides_list(request, creator, origin, destination, date_time, seats):
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.all()
+        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the rides that are not created by the user
         serializer = RidesSerializer(rides, many=True)
         return Response(serializer.data)
     
     if request.method == 'POST':
-        print(request.data)
-        return Response(request.data)
-    
-"""     data = JSONParser().parse(request)
-        serializer = RidesSerializer(data=data, many=False)
+        data = JSONParser().parse(request)
+        data["creator"] = request.user.pk #Do not need to pass creator in the api call's body, it is automatically added
+        serializer = CreateRidesSerializer(data=data, many=False)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
+            return Response({"Success": "Ride Created Successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])        
@@ -100,24 +102,15 @@ def my_rides(request, creator):
     if request.method == 'DELETE':
         rides.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-class ride(generics.ListAPIView):
-    queryset = Rides.objects.all()
-    serializer_class = RidesSerializer
-
+"""
 def rides(request,ride):
     data = Rides.objects.filter(creator=ride)
     serializer = RidesSerializer(data, many=True)
-    return JsonResponse(serializer.data, safe = False)
-
-def rides(request,ride):
-    data = Rides.objects.filter(creator=ride)
-    serializer = RidesSerializer(data, many=True)
-    return JsonResponse(serializer.data, safe = False)
+    return JsonResponse(serializer.data, safe = False)"""
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication,])
-@permission_classes([IsAuthenticated,])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def getUserinfo(request):
     user = request.user
     user_data = {
@@ -155,7 +148,7 @@ def login(request):
         return HttpResponse("failed")
 
 @api_view(['POST'])
-@permission_classes([AllowAny,])
+@permission_classes([AllowAny])
 def signup(request):
         if request.method == 'POST':
             data=JSONParser().parse(request)    
