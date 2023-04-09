@@ -85,12 +85,10 @@ def riderequest(request, id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def myrides(request):
-    user = request.user.pk
-    ride_requests = RideRequests.objects.filter(passenger=user)
-    ride_requests_serializer = RideRequestsSerializer(ride_requests, many=True)
-    rides = Rides.objects.filter(creator=user)
-    rides_serializer = RidesSerializer(rides, many=True)
-    return Response({"rides": rides_serializer.data, "ride_requests": ride_requests_serializer.data})
+    user = request.user
+    data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user))
+    serializer = RideRequestsSerializer(data, many=True)
+    return JsonResponse(serializer.data, safe= False)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
