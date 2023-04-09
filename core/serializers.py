@@ -5,25 +5,12 @@ from rest_framework_json_api import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 
-class RidesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rides
-        fields = '__all__'
-
 class CreateRidesSerializer(serializers.ModelSerializer):
     creator = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Rides
         fields = ['creator', 'origin', 'destination', 'types', 'date_time', 'recurring', 'seats']
-    
-class RideRequestsSerializer(serializers.ModelSerializer):
-
-    ride = serializers.PrimaryKeyRelatedField(queryset=Rides.objects.all())
-
-    class Meta:
-        model = RideRequests
-        fields = '__all__'
 
 class RatingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,8 +42,16 @@ class RidesSerializer(serializers.ModelSerializer):
 
 class RideRequestsSerializer(serializers.ModelSerializer):
     ride = RidesSerializer()
+    passenger = UserSerializer()
 
     class Meta:
         model = RideRequests
         fields = '__all__'
-        
+
+class CreateRideRequestsSerializer(serializers.ModelSerializer):
+    ride = serializers.PrimaryKeyRelatedField(queryset=Rides.objects.all())
+    passenger = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        model = RideRequests
+        fields = ['ride', 'passenger', 'status']
