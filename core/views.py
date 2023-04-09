@@ -64,7 +64,7 @@ def index(request):
 
 #Method to create a ride and view all the rides
 #Path: /core/rides
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def rides(request):
@@ -81,42 +81,56 @@ def rides(request):
             serializer.save()
             return Response({"Success": "Ride Created Successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    """
+    if request.method == 'DELETE':
+        ride = Rides.objects.get(id=request.data["id"])
+        ride.delete()
+        return Response({"Success": "Ride Deleted Successfully"}, status=status.HTTP_204_NO_CONTENT)"""
+    
+
+    
 
 
-@api_view(['GET', 'PUT', 'DELETE'])        
-def my_rides(request, creator):
-    #/core/rides?query=creator
-    rides = Rides.objects.get(creator=creator)
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])        
+def riderequest(request, id):
     if request.method == 'GET':
-        rides_serializer = RidesSerializer(rides, many=True)
-        
-        return Response(rides_serializer.data)
+        ride = Rides.objects.get(id=id)
+        ride_requests = RideRequests.objects.filter(ride = ride, status="Pending") | RideRequests.objects.filter(ride = ride, status="Accepted")
+        serializer = RideRequestsSerializer(ride_requests, many=True)
+        return Response(serializer.data)
 
-    if request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = RidesSerializer(rides, data=data, many=False)
+    if request.method == 'POST':
+        data = {}
+        data["ride"] = Rides.objects.get(id=id).pk
+        data["passenger"] = request.user.pk #Do not need to pass passenger (logged in user) in the api call's body, it is automatically added
+        serializer = CreateRideRequestsSerializer(data=data, many=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'DELETE':
-        rides.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-"""
-def rides(request,ride):
-    data = Rides.objects.filter(creator=ride)
-    serializer = RidesSerializer(data, many=True)
-    return JsonResponse(serializer.data, safe = False)"""
+    """if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = RidesSerializer(rides, data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication,])
 @permission_classes([IsAuthenticated,])
 def myrides(request):
-    user = request.user
-    data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user))
-    serializer = RideRequestsSerializer(data, many=True)
-    return JsonResponse(serializer.data, safe= False)
+    user = request.user.pk
+    ride_requests = RideRequests.objects.filter(passenger=user)
+    ride_requests_serializer = RideRequestsSerializer(ride_requests, many=True)
+    rides = Rides.objects.filter(creator=user)
+    rides_serializer = RidesSerializer(rides, many=True)
+    return Response({"rides": rides_serializer.data, "ride_requests": ride_requests_serializer.data})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication,])

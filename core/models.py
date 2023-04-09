@@ -38,11 +38,15 @@ class Rides(models.Model):
         return f"{self.origin} to {self.destination}"
     
 
-
 class RideRequests(models.Model):
     ride = models.ForeignKey(Rides, on_delete=models.CASCADE)
     passenger = models.ForeignKey(User, on_delete=models.CASCADE)
-    accepted = models.BooleanField()
+    CHOICES = (
+        ('Accepted', 'Accepted'),
+        ('Pending', 'Pending'),
+        ('Rejected', 'Rejected'),
+    )
+    status = models.CharField(max_length=10, choices=CHOICES, default='Pending')
 
     class Meta:
         verbose_name = ("Ride Request")
