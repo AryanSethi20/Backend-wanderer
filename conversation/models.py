@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.models import Rides
+from django.core.exceptions import ValidationError
 
 class Conversation(models.Model):
     rides = models.ForeignKey(Rides, related_name='conversations', on_delete=models.CASCADE)
@@ -19,3 +20,7 @@ class ConversationMessage(models.Model):
     
     class Meta:
         ordering = ('created_at',)
+
+    def clean(self):
+        if self.created_by not in self.conversation.members.all():
+            raise ValidationError('The creator of the message must be a member of the conversation.')
