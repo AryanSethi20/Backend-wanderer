@@ -18,3 +18,7 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
         model = ConversationMessage
         fields = ('conversation', 'content', 'created_at', 'created_by')
 
+class CreateConversationMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConversationMessage
+        fields = ['conversation', 'content', 'created_by', 'created_at']

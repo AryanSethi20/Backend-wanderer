@@ -24,12 +24,31 @@ from django.core.exceptions import *
 @permission_classes([IsAuthenticated,])
 def chat(request,index,other):
     user=request.user
-    try:
-        conversationdata = Conversation.objects.get(rides=index ,  members__in=[user,User.objects.get(id=other)])
+    try:    
+        conversationdata = Conversation.objects.filter(rides=index ,  members=user).get(members=other)
         messagedata = ConversationMessage.objects.filter(conversation = conversationdata)
         serializer = ConversationMessageSerializer(messagedata, many=True)
         return JsonResponse(serializer.data, safe=False)
     except ObjectDoesNotExist:
         return HttpResponse("ObjectDoesNotExist")
     
+@api_view(['POST'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication,])
+@permission_classes([IsAuthenticated,])
+def sendchat(request):
+    try:    
+        data = JSONParser().parse(request)
+        data["created_by"] = request.user.pk
+        data["content"] = "hello"
+        serializer = CreateConversationMessageSerializer(data=data, many=False)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'Success': 'Message sent successfully'}, status=status.HTTP_201_CREATED)
+    except ValidationError as e:
+        return Response({'Failed': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'Failed': 'Message failed to be sent'}, status=status.HTTP_400_BAD_REQUEST)
 
