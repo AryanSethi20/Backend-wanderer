@@ -1,8 +1,10 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny
 
 def get_token():
     url = 'https://www.ura.gov.sg/uraDataService/insertNewToken.action'
@@ -24,6 +26,8 @@ def get_token():
 
 #/api/carpark/
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([AllowAny])
 def carpark(request):
     tokenResponse = get_token()
     tokenResponseJson = json.loads(tokenResponse)
@@ -47,6 +51,8 @@ def carpark(request):
 
 #/api/taxi/
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([AllowAny])
 def taxiAvailability(request):
     url = "https://api.data.gov.sg/v1/transport/taxi-availability"
     response = requests.get(url)
