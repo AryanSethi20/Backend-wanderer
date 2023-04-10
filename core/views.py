@@ -25,12 +25,12 @@ def index(request):
 
 #Method to create a ride and view all the rides
 #Path: /core/rides
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the rides that are not created by the user
+        rides = Rides.objects.exclude(creator=request.user.pk, status="Open") #Returns only the rides that are not created by the user
         serializer = RidesSerializer(rides, many=True)
         return Response(serializer.data)
     
@@ -44,6 +44,16 @@ def rides(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     """
+    if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        data["creator"] = request.user.pk #Do not need to pass creator in the api call's body, it is automatically added
+        rides = Rides.objects.get(id=request.data["id"])
+        serializer = CreateRidesSerializer(rides, data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     if request.method == 'DELETE':
         ride = Rides.objects.get(id=request.data["id"])
         ride.delete()
@@ -104,10 +114,7 @@ def ratings(request):
 @permission_classes([IsAuthenticated])        
 def riderequest(request):
     if request.method == 'GET':
-        data = JSONParser().parse(request)
-        ride = Rides.objects.get(id=data["ride"])
-        print(ride)
-        ride_requests = RideRequests.objects.filter(ride = ride, status="Pending") | RideRequests.objects.filter(ride = ride, status="Accepted")
+        ride_requests = RideRequests.objects.filter(ride__creator = request.user.pk, status="Pending") | RideRequests.objects.filter(ride__creator = request.user.pk, status="Accepted")
         serializer = RideRequestsSerializer(ride_requests, many=True)
         return Response(serializer.data)
 

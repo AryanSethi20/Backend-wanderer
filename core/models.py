@@ -7,7 +7,7 @@ from django.db import models
 class UserProfiles(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
-    profile_pic = models.ImageField(upload_to='profile_pics', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='', blank=True, null=True)
     #avg_rating = models.IntegerField(default=0)
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)

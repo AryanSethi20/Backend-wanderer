@@ -32,7 +32,7 @@ class CreateRidesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rides
-        fields = ['creator', 'origin', 'destination', 'types', 'date_time', 'recurring', 'seats']
+        fields = ['creator', 'origin', 'destination', 'types', 'date_time', 'recurring', 'seats', 'start_lat', 'end_lat']
 
 class RideRequestsSerializer(serializers.ModelSerializer):
     ride = RidesSerializer()
