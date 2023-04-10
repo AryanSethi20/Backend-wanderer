@@ -8,7 +8,9 @@ class UserProfiles(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True, null=True)
-    avg_rating = models.IntegerField(default=0)
+    #avg_rating = models.IntegerField(default=0)
+    date_of_birth = models.DateField(blank=True, null=True)
+    address = models.CharField(max_length=500, blank=True, null=True)
     
     class Meta:
         verbose_name = ("User Profile")
@@ -18,7 +20,7 @@ class UserProfiles(models.Model):
     
 
 class Rides(models.Model):
-    creator = models.ForeignKey(User, related_name='rides', on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, related_name='creator', on_delete=models.CASCADE)
     origin = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
     CHOICES = (
@@ -29,6 +31,14 @@ class Rides(models.Model):
     date_time = models.DateTimeField()
     recurring = models.BooleanField()
     seats = models.IntegerField()
+    start_lat = models.CharField(max_length=50, null=True)
+    end_lat = models.CharField(max_length=50, null=True)
+    CHOICES = (
+        ('Open', 'Open'),
+        ('Closed', 'Closed'),
+        ('Completed', 'Completed')
+    )
+    status = models.CharField(max_length=10, choices = CHOICES, default='Open')
 
     class Meta:
         verbose_name = ("Ride")
@@ -36,6 +46,10 @@ class Rides(models.Model):
 
     def __str__(self):
         return f"{self.origin} to {self.destination}"
+    
+    def update_seats(self):
+        self.seats = self.seats - 1
+        self.save()
     
 
 class RideRequests(models.Model):
@@ -54,14 +68,27 @@ class RideRequests(models.Model):
     def __str__(self):
         return f"{self.passenger} requests to ride with {self.ride}"
     
-class Ratings(models.Model):
+"""class Ratings(models.Model):
+    ride = models.ForeignKey(Rides, on_delete=models.CASCADE)
     user_rating = models.ForeignKey(User, related_name='user_rating', on_delete=models.CASCADE)
     user_rated = models.ForeignKey(User, related_name='user_rated', on_delete=models.CASCADE)
-    rating = models.IntegerField(default=0)
-    comment = models.TextField(blank=True, null=True)
+    RATE_CHOICES = (
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    )
+    rating = models.IntegerField(choices=RATE_CHOICES, default=0)
+    CHOICES = (
+        ('Pending', 'Pending'),
+        ('Completed', 'Completed'),
+    )
+    status = models.CharField(max_length=10, choices=CHOICES, default='Pending')
 
     class Meta:
         verbose_name = ("Rating")
 
     def __str__(self):
-        return f"{self.user_rating} rated {self.user_rated}"
+        return f"{self.user_rating} rated {self.user_rated}"""

@@ -33,16 +33,17 @@ def chat(request,index,other):
         return HttpResponse("ObjectDoesNotExist")
     
 @api_view(['POST'])
-@csrf_exempt
-@authentication_classes([TokenAuthentication,])
-@permission_classes([IsAuthenticated,])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def sendchat(request):
     try:    
         data = JSONParser().parse(request)
         data["created_by"] = request.user.pk
         data["content"] = "hello"
+        data["conversation"] = Conversation.objects.get(id=data["conversation_id"]).pk
         serializer = CreateConversationMessageSerializer(data=data, many=False)
         if not serializer.is_valid():
+            print(serializer.errors)
             return Response(serializer.errors)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -51,4 +52,3 @@ def sendchat(request):
         return Response({'Failed': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'Failed': 'Message failed to be sent'}, status=status.HTTP_400_BAD_REQUEST)
-
