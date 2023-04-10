@@ -44,6 +44,7 @@ def sendchat(request):
         serializer = CreateConversationMessageSerializer(data=data, many=False)
         if not serializer.is_valid():
             print(serializer.errors)
+            print(serializer.errors)
             return Response(serializer.errors)
         serializer.is_valid(raise_exception=True)
         serializer.save()

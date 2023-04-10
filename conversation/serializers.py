@@ -4,6 +4,7 @@ from rest_framework_json_api import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from core.serializers import *
+from django.contrib.auth.models import User
 
 class ConversationSerializer(serializers.ModelSerializer):
 

@@ -105,6 +105,7 @@ def riderequest(request):
     if request.method == 'GET':
         data = JSONParser().parse(request)
         ride = Rides.objects.get(id=data["ride"])
+        print(ride)
         ride_requests = RideRequests.objects.filter(ride = ride, status="Pending") | RideRequests.objects.filter(ride = ride, status="Accepted")
         serializer = RideRequestsSerializer(ride_requests, many=True)
         return Response(serializer.data)
@@ -151,18 +152,20 @@ def getUserinfo(request):
     print(request.user)
     return Response(user_data)
 
-@csrf_exempt
-def Userprofile(request):
-    if request.method =='POST':
-        data = JSONParser().parse(request)
-        serializer = UserProfilesSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors)
-    else:
-        return HttpResponse("failed")
-    
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def getMyuserprofile(request):
+    try:
+        user = request.user
+        data = UserProfiles.objects.get(user = user)
+        serializer = UserProfilesSerializer(data, many=False)
+        return JsonResponse(serializer.data)
+    except:
+        return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
+
+
+
 @csrf_exempt
 def login(request):
     if request.method =='POST':
