@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -189,3 +190,29 @@ def signup(request):
                 return Response({'Success': 'User created successfully'}, status=status.HTTP_201_CREATED)
             
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def handle_request(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        ride = Rides.objects.get(id=data["ride_id"])
+        riderequest = RideRequests.objects.get(id=data["request_id"])
+        riderequest.status = data["status"]
+        riderequest.save()
+        if data["status"] == "Accepted":
+            ride.seats -= 1
+            ride.save()
+        return redirect("/core/myrides/")
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def handle_ride(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        ride = Rides.objects.get(id=data["ride_id"])
+        ride.status = data["status"]
+        ride.save()
+        return redirect("/core/myrides/")
