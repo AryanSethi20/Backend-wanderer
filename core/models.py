@@ -46,11 +46,6 @@ class Rides(models.Model):
 
     def __str__(self):
         return f"{self.origin} to {self.destination}"
-    
-    def update_seats(self):
-        self.seats = self.seats - 1
-        self.save()
-    
 
 class RideRequests(models.Model):
     ride = models.ForeignKey(Rides, on_delete=models.CASCADE)
