@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
 from .models import *
 from .serializers import *
+from conversation.models import Conversation
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework.parsers import JSONParser
@@ -234,6 +235,9 @@ def handle_request(request):
         if data["status"] == "Accepted":
             ride.seats -= 1
             ride.save()
+            conversations = Conversation.objects.get(rides=ride)
+            passenger = riderequest.passenger
+            conversations.members.add(passenger)
         if ride.seats == 0:
             ride.status = "Closed"
             ride.save()
