@@ -121,6 +121,18 @@ def myUserProfile(request):
             profile_serialize = UserProfilesSerializer(userprofile, many=False)
             return JsonResponse(profile_serialize.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def allUserProfiles(request):
+    if request.method == 'GET':
+        try:
+            data = UserProfiles.objects.all()
+            serializer = UserProfilesSerializer(data, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

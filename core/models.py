@@ -8,7 +8,6 @@ class UserProfiles(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     profile_pic = models.URLField(max_length=500, blank=True, null=True)
-    #avg_rating = models.IntegerField(default=0)
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     
@@ -62,28 +61,3 @@ class RideRequests(models.Model):
 
     def __str__(self):
         return f"{self.passenger} requests to ride with {self.ride}"
-    
-"""class Ratings(models.Model):
-    ride = models.ForeignKey(Rides, on_delete=models.CASCADE)
-    user_rating = models.ForeignKey(User, related_name='user_rating', on_delete=models.CASCADE)
-    user_rated = models.ForeignKey(User, related_name='user_rated', on_delete=models.CASCADE)
-    RATE_CHOICES = (
-        (0, '0'),
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
-    )
-    rating = models.IntegerField(choices=RATE_CHOICES, default=0)
-    CHOICES = (
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed'),
-    )
-    status = models.CharField(max_length=10, choices=CHOICES, default='Pending')
-
-    class Meta:
-        verbose_name = ("Rating")
-
-    def __str__(self):
-        return f"{self.user_rating} rated {self.user_rated}"""

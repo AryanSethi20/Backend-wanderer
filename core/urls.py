@@ -7,8 +7,8 @@ urlpatterns = [
     path('riderequest/', views.riderequest, name='Ride-Request'),
     path('user-info/', views.getUserinfo, name='User-info'),
     path('userprofile/', views.myUserProfile, name='User-profile'),
+    path('alluserprofiles/', views.allUserProfiles, name='All-User-profile'),
     path('<int:index>/', views.index, name='index'),
     path('register/', views.signup, name='register'),
-    #path('rating/', views.ratings, name='rating'),
     path('handle-request/', views.handle_request, name='handle-request'),
 ]

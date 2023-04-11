@@ -54,20 +54,3 @@ class CreateRideRequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model = RideRequests
         fields = ['ride', 'passenger', 'status']
-"""
-class RatingsSerializer(serializers.ModelSerializer):
-    ride = RidesSerializer()
-    user_rating = UserSerializer()
-    user_rated = UserSerializer()
-    class Meta:
-        model = Ratings
-        fields = '__all__'
-
-class CreateRatingsSerializer(serializers.ModelSerializer):
-    ride = serializers.PrimaryKeyRelatedField(queryset=Rides.objects.all())
-    user_rating = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    user_rated = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    class Meta:
-        model = Ratings
-        fields = ['user_rating', 'user_rated', 'rating']"""
