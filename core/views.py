@@ -51,71 +51,7 @@ def rides(request):
             return Response({"Success": "Ride Created Successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    """
-    if request.method == 'PUT':
-        data = JSONParser().parse(request)
-        data["creator"] = request.user.pk #Do not need to pass creator in the api call's body, it is automatically added
-        rides = Rides.objects.get(id=request.data["id"])
-        serializer = CreateRidesSerializer(rides, data=data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    if request.method == 'DELETE':
-        ride = Rides.objects.get(id=request.data["id"])
-        ride.delete()
-        return Response({"Success": "Ride Deleted Successfully"}, status=status.HTTP_204_NO_CONTENT)"""
     
-
-
-
-"""@api_view(['GET', 'POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def ratings(request):
-    if request.method == 'GET':
-        ride = Rides.objects.filter(creator=request.user, status="Completed")
-        riderequest = RideRequests.objects.filter(passenger=request.user.pk, status = "Accepted")
-        riderequest = riderequest.filter(~Q(ride__status="Completed"))
-        riderequest = riderequest.values_list('ride', flat=True)
-        for r in ride:
-            ratings = Ratings.objects.filter(ride=r) #| Ratings.objects.filter(ride=riderequest)
-            serializer += RatingsSerializer(ratings, many=True)
-        #serializer = RatingsSerializer(ratings, many=True)
-        #if serializer.is_valid():
-        return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        data["user_rating"] = request.user.pk
-        if data["ride_id"]:
-            data["user_rated"] = Rides.objects.get(id=data["ride_id"]).creator.pk
-        if data["ride_request_id"]:
-            data["user_rated"] = RideRequests.objects.get(id=data["ride_request_id"]).passenger.pk
-        serializer = CreateRatingsSerializer(data=data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    if request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = RatingsSerializer(ratings, data=data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    if request.method == 'DELETE':
-        ratings = Ratings.objects.get(id=request.data["id"])
-        ratings.delete()
-        return Response({"Success": "Ratings Deleted Successfully"}, status=status.HTTP_204_NO_CONTENT) """
-
-
-
-
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
@@ -136,13 +72,6 @@ def riderequest(request):
             return Response({"Success": "Request created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    """if request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = RidesSerializer(rides, data=data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 
 @api_view(['GET'])
@@ -154,7 +83,6 @@ def myrides(request):
     newdata = Rides.objects.filter(Q(id__in=data) | Q(creator=user))
     serializer = RidesSerializer(newdata, many=True)
     return JsonResponse(serializer.data, safe= False, status=status.HTTP_200_OK)
-    return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
