@@ -30,7 +30,7 @@ class RidesSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
     class Meta:
         model = Rides
-        fields = ['id', 'creator', 'origin', 'destination', 'date_time', 'recurring', 'seats', 'status', 'start_lat', 'end_lat']
+        fields = ['id', 'creator', 'origin', 'destination', 'date_time', 'types', 'recurring', 'seats', 'status', 'start_lat', 'end_lat']
 
 class CreateRidesSerializer(serializers.ModelSerializer):
     creator = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
