@@ -144,7 +144,9 @@ def myrides(request):
     user = request.user
     data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user))
     serializer = RideRequestsSerializer(data, many=True)
-    return JsonResponse(serializer.data, safe= False)
+    if serializer.is_valid():
+        return JsonResponse(serializer.data, safe= False, status=status.HTTP_200_OK)
+    return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -160,18 +162,29 @@ def getUserinfo(request):
     print(request.user)
     return Response(user_data)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def getMyuserprofile(request):
-    try:
-        user = request.user
-        data = UserProfiles.objects.get(user = user)
-        serializer = UserProfilesSerializer(data, many=False)
-        return JsonResponse(serializer.data)
-    except:
-        return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
-
+def myUserProfile(request):
+    if request.method == 'GET':
+        try:
+            user = request.user
+            data = UserProfiles.objects.get(user = user)
+            serializer = UserProfilesSerializer(data, many=False)
+            return JsonResponse(serializer.data)
+        except:
+            return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        data["user"] = request.user
+        userprofile = UserProfiles.objects.get(user = request.user)
+        serializer = UpdateUserProfilesSerializer(userprofile, data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            profile_serialize = UserProfilesSerializer(userprofile, many=False)
+            return JsonResponse(profile_serialize.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

@@ -20,6 +20,11 @@ class UserProfilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfiles
         fields = '__all__'
+
+class UpdateUserProfilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfiles
+        fields = ['date_of_birth', 'bio', 'address']
         
 class RidesSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
