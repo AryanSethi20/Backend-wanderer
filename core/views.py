@@ -16,6 +16,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db.models import Q
+import datetime
 
 @api_view(['GET'])
 def index(request):
@@ -30,8 +31,14 @@ def index(request):
 @permission_classes([IsAuthenticated])
 def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.exclude(creator=request.user.pk, status="Open") #Returns only the rides that are not created by the user
-        serializer = RidesSerializer(rides, many=True)
+        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open rides that are not created by the current logged-in user
+        time = datetime.datetime.now()
+        for r in rides:
+            if time>r.date_time:
+                r.status = "Completed"
+                r.save()
+        new_rides = rides.filter(status="Open")
+        serializer = RidesSerializer(new_rides, many=True)
         return Response(serializer.data)
     
     if request.method == 'POST':
@@ -226,15 +233,7 @@ def handle_request(request):
         if data["status"] == "Accepted":
             ride.seats -= 1
             ride.save()
-        return redirect("/core/myrides/")
-
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def handle_ride(request):
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        ride = Rides.objects.get(id=data["ride_id"])
-        ride.status = data["status"]
-        ride.save()
-        return redirect("/core/myrides/")
+        if ride.seats == 0:
+            ride.status = "Closed"
+            ride.save()
+        return redirect("/core/riderequest/")
