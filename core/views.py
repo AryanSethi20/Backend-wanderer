@@ -35,7 +35,12 @@ def rides(request):
         rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open rides that are not created by the current logged-in user
         time = datetime.datetime.now()
         for r in rides:
-            if time>r.date_time:
+            if time>r.date_time and r.recurring==True:
+                new_time = r.date_time + datetime.timedelta(days=7)
+                Rides.objects.create(creator=r.creator, origin=r.origin, destination=r.destination, types=r.types, date_time=new_time, recurring=r.recurring, seats=r.seats, start_lat=r.start_lat, end_lat=r.end_lat)
+                r.status = "Completed"
+                r.save()
+            elif time>r.date_time:
                 r.status = "Completed"
                 r.save()
         new_rides = rides.filter(status="Open")
