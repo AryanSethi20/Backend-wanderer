@@ -40,7 +40,7 @@ def sendchat(request):
     try:    
         data = JSONParser().parse(request)
         data["created_by"] = request.user.pk
-        data["conversation"] = Conversation.objects.get(id=data["conversation_id"]).pk
+        data["conversation"] = Conversation.objects.get(rides__id=data["conversation_id"]).pk
         serializer = CreateConversationMessageSerializer(data=data, many=False)
         if not serializer.is_valid():
             print(serializer.errors)
