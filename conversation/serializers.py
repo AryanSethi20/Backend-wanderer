@@ -8,9 +8,10 @@ from django.contrib.auth.models import User
 
 class ConversationSerializer(serializers.ModelSerializer):
 
+    members = UserSerializer(many=True)
     class Meta:
         model = Conversation
-        fields = ['rides', 'created_at', 'modified_at']
+        fields = ['rides', 'created_at', 'modified_at', 'members']
 
 class ConversationMessageSerializer(serializers.ModelSerializer):
     

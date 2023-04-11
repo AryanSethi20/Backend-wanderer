@@ -22,11 +22,12 @@ from django.core.exceptions import *
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication,])
 @permission_classes([IsAuthenticated,])
-def chat(request,index,other):
+def chat(request,index):
     user=request.user
     try:    
-        conversationdata = Conversation.objects.filter(rides=index ,  members=user).get(members=other)
+        conversationdata = Conversation.objects.get(rides=index ,  members=user)
         messagedata = ConversationMessage.objects.filter(conversation = conversationdata)
+        print(messagedata)
         serializer = ConversationMessageSerializer(messagedata, many=True)
         return JsonResponse(serializer.data, safe=False)
     except ObjectDoesNotExist:
@@ -39,11 +40,9 @@ def sendchat(request):
     try:    
         data = JSONParser().parse(request)
         data["created_by"] = request.user.pk
-        data["content"] = "hello"
         data["conversation"] = Conversation.objects.get(id=data["conversation_id"]).pk
         serializer = CreateConversationMessageSerializer(data=data, many=False)
         if not serializer.is_valid():
-            print(serializer.errors)
             print(serializer.errors)
             return Response(serializer.errors)
         serializer.is_valid(raise_exception=True)
@@ -53,3 +52,15 @@ def sendchat(request):
         return Response({'Failed': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'Failed': 'Message failed to be sent'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication,])
+@permission_classes([IsAuthenticated,])
+def members(request,index):
+    user=request.user
+    try:    
+        conversationdata = Conversation.objects.filter(rides=index)
+        serializer = ConversationSerializer(conversationdata, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    except ObjectDoesNotExist:
+        return HttpResponse("ObjectDoesNotExist")

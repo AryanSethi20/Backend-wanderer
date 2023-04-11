@@ -144,8 +144,7 @@ def myrides(request):
     user = request.user
     data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user))
     serializer = RideRequestsSerializer(data, many=True)
-    if serializer.is_valid():
-        return JsonResponse(serializer.data, safe= False, status=status.HTTP_200_OK)
+    return JsonResponse(serializer.data, safe= False, status=status.HTTP_200_OK)
     return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
