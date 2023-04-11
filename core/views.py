@@ -151,7 +151,7 @@ def riderequest(request):
 def myrides(request):
     user = request.user
     data = RideRequests.objects.filter(Q(passenger=user) | Q(ride__creator=user)).values('ride__id').distinct()
-    newdata = Rides.objects.filter(id__in=data)
+    newdata = Rides.objects.filter(Q(id__in=data) | Q(creator=user))
     serializer = RidesSerializer(newdata, many=True)
     return JsonResponse(serializer.data, safe= False, status=status.HTTP_200_OK)
     return JsonResponse({'failed':"failed"},status=status.HTTP_400_BAD_REQUEST)
