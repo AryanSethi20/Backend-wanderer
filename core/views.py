@@ -32,7 +32,7 @@ def index(request):
 @permission_classes([IsAuthenticated])
 def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open rides that are not created by the current logged-in user
+        rides = Rides.objects.exclude(creator=request.user.pk, status="Completed") #Returns only the open and closed rides that are not created by the current logged-in user
         time = datetime.datetime.now()
         for r in rides:
             if time>r.date_time and r.recurring==True:
