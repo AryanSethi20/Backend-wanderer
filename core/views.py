@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db.models import Q
 import datetime
+from django.utils import timezone
 
 @api_view(['GET'])
 def index(request):
@@ -32,8 +33,9 @@ def index(request):
 @permission_classes([IsAuthenticated])
 def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.exclude(creator=request.user.pk, status="Completed") #Returns only the open and closed rides that are not created by the current logged-in user
-        time = datetime.datetime.now()
+        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open and closed rides that are not created by the current logged-in user
+        rides = rides.exclude(status="Completed")
+        time = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
         for r in rides:
             if time>r.date_time and r.recurring==True:
                 new_time = r.date_time + datetime.timedelta(days=7)
