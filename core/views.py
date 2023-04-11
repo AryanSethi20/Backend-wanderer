@@ -213,6 +213,7 @@ def login(request):
 def signup(request):
         if request.method == 'POST':
             data=JSONParser().parse(request)    
+            print(data)
             serializer = UserSerializer(data=data)
 
             if serializer.is_valid():
