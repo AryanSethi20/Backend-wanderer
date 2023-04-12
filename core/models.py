@@ -7,7 +7,7 @@ from django.db import models
 class UserProfiles(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
-    profile_pic = models.URLField(max_length=500, blank=True, null=True)
+    profile_pic = models.URLField(max_length=500, blank=True, null=True, default="https://i.pinimg.com/736x/36/df/0a/36df0abbd305ce828abfb78114e2af11.jpg")
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     
@@ -44,7 +44,7 @@ class Rides(models.Model):
         get_latest_by = ["date_time"]
 
     def __str__(self):
-        return f"{self.origin} to {self.destination}"
+        return f"{self.origin} to {self.destination} with {self.types}"
 
 class RideRequests(models.Model):
     ride = models.ForeignKey(Rides, on_delete=models.CASCADE)
