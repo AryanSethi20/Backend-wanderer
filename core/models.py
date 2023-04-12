@@ -29,7 +29,7 @@ class Rides(models.Model):
     types = models.CharField(max_length=15, choices=CHOICES, default='Personal Car')
     date_time = models.DateTimeField()
     recurring = models.BooleanField()
-    seats = models.IntegerField()
+    seats = models.PositiveSmallIntegerField()
     start_lat = models.CharField(max_length=50, null=True)
     end_lat = models.CharField(max_length=50, null=True)
     CHOICES = (
