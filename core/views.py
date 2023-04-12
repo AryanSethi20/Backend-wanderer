@@ -186,6 +186,10 @@ def handle_request(request):
             conversations = Conversation.objects.get(rides=ride)
             passenger = riderequest.passenger
             conversations.members.add(passenger)
+            conversations.save()
+        if ride.seats < 0:
+            ride.seats = 0
+            ride.save()
         if ride.seats == 0:
             ride.status = "Closed"
             ride.save()
