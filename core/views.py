@@ -33,8 +33,9 @@ def index(request):
 @permission_classes([IsAuthenticated])
 def rides(request):
     if request.method == 'GET':
-        rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open and closed rides that are not created by the current logged-in user
-        rides = rides.exclude(status="Completed")
+        #rides = Rides.objects.exclude(creator=request.user.pk) #Returns only the open and closed rides that are not created by the current logged-in user
+        rides = Rides.objects.exclude(status="Completed")
+        #rides = rides.exclude(status="Completed")
         time = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
         for r in rides:
             if time>r.date_time and r.recurring==True:
@@ -45,7 +46,8 @@ def rides(request):
             elif time>r.date_time:
                 r.status = "Completed"
                 r.save()
-        new_rides = rides.filter(status="Open")
+        new_rides = Rides.objects.exclude(creator=request.user.pk)
+        new_rides = new_rides.filter(status="Open")
         serializer = RidesSerializer(new_rides, many=True)
         return Response(serializer.data)
     
