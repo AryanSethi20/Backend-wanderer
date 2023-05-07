@@ -1,4 +1,15 @@
 # Backend-wanderer
+
+## Workflow of the app
+<a href="https://youtu.be/x5ggTytjw38"></a>
+
+## Frontend
+<a href="https://github.com/weiyuan12/Software-Eng"></a>
+
+## Software Requirements
+<a href="https://docs.google.com/document/d/1L9Sz71SD4isYuo-VsAyscfKQ9wd7YC_EA6Un4naYTuQ/edit?usp=sharing"></a>
+
+## Steps to run the backend on your local machine
 To run the repository, create a new virtual environment after cloning the repository<br>
 <code>python -m venv <Name of virtual environment> </code>
 
