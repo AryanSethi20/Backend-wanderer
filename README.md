@@ -1,5 +1,10 @@
 # Backend-wanderer
 
+## What is Wanderer?
+<a href="https://ibb.co/QQG63Vy"><img src="https://i.ibb.co/c3dNS94/Screenshot-2023-05-08-at-11-06-24.jpg" alt="Screenshot-2023-05-08-at-11-06-24" border="0"></a>
+<p>Wanderful is a web-based platform that enables users to carpool with others to travel around Singapore easily. The application allows drivers to create carpool rides that passengers can then book, while passengers can search for available rides and find suitable options to carpool with. Furthermore, Wanderful provides information on nearby car parks, available parking lots, and nearby taxi services to assist drivers in finding convenient parking options and help passengers easily commute around Singapore.</p>
+<p>With Wanderful, users can quickly and conveniently find carpool rides to get around Singapore and carry out their daily activities.</p>
+
 ## Workflow of the app
 <a href="https://youtu.be/x5ggTytjw38">Link</a>
 
